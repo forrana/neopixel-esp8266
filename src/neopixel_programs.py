@@ -1,7 +1,7 @@
 # This is script that run when device boot up or wake from sleep.
-import time
 import uasyncio as asyncio
 import machine, neopixel
+import gc
 import global_vars
 
 np = neopixel.NeoPixel(machine.Pin(4), 7, bpp=4)
@@ -12,7 +12,6 @@ def clear(np):
     for i in range(n):
         np[i] = (0, 0, 0, 0)
     np.write()
-
 
 async def cycle(np, delay):
     n = np.n
@@ -65,5 +64,5 @@ async def indirect(programm, delay):
 async def start(programm, delay):
     print("neopixel start")
     while True:
-        print("programm number is %s" % global_vars.PROGRAMM_NUMBER)
-        await indirect(global_vars.PROGRAMM_NUMBER, delay)
+        await indirect(global_vars.PROGRAM_NUMBER, delay)
+        gc.collect()
