@@ -10,12 +10,20 @@ from global_vars import manager
 def set_color(hex_color):
     manager.led_color = hex_color
 
+def set_background_color(hex_color):
+    manager.background_color = hex_color
+
 def set_program(program_id):
     manager.program_number = int(program_id)
+
+def set_delay(delay):
+    manager.delay = int(delay)
 
 switcher={
         'program':set_program,
         'color':set_color,
+        'delay':set_delay,
+        'background_color':set_background_color,
     }
 
 def set_value(key, value):
@@ -71,10 +79,11 @@ class Server:
                     break
             response = ""
             if is_get_request:
-                new_color = manager.led_color_hex
+                hex_color = manager.led_color_hex
+                hex_bg_color = manager.background_color_hex
                 isxchecked = ['']*3
                 isxchecked[manager.program_number - 1] = 'checked'
-                response = html.format(color=new_color,is1checked=isxchecked[0],is2checked=isxchecked[1],is3checked=isxchecked[2])
+                response = html.format(color=hex_color,is1checked=isxchecked[0],is2checked=isxchecked[1],is3checked=isxchecked[2],delay=manager.delay,background_color=hex_bg_color)
             else:
                 response = "HTTP/1.1 204 No Content\n\r\n"
             await swriter.awrite(response)

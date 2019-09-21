@@ -10,11 +10,19 @@ Content-Type: text/html; charset=UTF-8
             <input type="radio" name="program" value="1" {is1checked}> Cycle <br>
             <input type="radio" name="program" value="2" {is2checked}> Bounce <br>
             <input type="radio" name="program" value="3" {is3checked}> Fade <br>
-            Color: <input type="color" name="color" value="#{color}">
+            Active color: <input type="color" name="color" value="#{color}"><br/>
+            Background color: <input type="color" name="background_color" value="#{background_color}"><br/>
+            Animation delay: <input type="range" list="tickmarks" name="delay" min=5 max=500 step=5 value="{delay}">
+            <datalist id="tickmarks">
+                <option value="5" label="min"></option>
+                <option value="100" label="default"></option>
+                <option value="500" label="max"></option>
+            </datalist>
         <script>
-            async function onChange(e, param) {{
+            async function onChange(e) {{
                 try {{
                     const value = e.target.value;
+                    const param = e.target.name;
                     result = await fetch('/', {{
                         method: 'POST',
                         body: JSON.stringify({{[param]: value}})
@@ -25,11 +33,8 @@ Content-Type: text/html; charset=UTF-8
                     alert("Something went wrong, check console for details!");
                 }}
             }}
-            document.querySelectorAll("[name=program]").forEach(
-                (el) => el.addEventListener('change', (e) => onChange(e, 'program'))
-            );
-            document.querySelectorAll("[name=color]").forEach(
-                (el) => el.addEventListener('change', (e) => onChange(e, 'color'))
+            document.querySelectorAll("input").forEach(
+                (el) => el.addEventListener('change', (e) => onChange(e))
             );
         </script>
     </body>

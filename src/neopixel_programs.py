@@ -8,17 +8,16 @@ np = neopixel.NeoPixel(machine.Pin(4), 7, bpp=4)
 
 def clear(np):
     n = np.n
-    # clear
     for i in range(n):
         np[i] = (0, 0, 0, 0)
     np.write()
 
-async def cycle(np, delay, color):
+async def cycle(np, delay, color, background_color):
     n = np.n
     if n % 2 == 0:
         for i in range(n):
             for j in range(n):
-                np[j] = (0, 0, 0, 0)
+                np[j] = background_color
             np[i % n] = color
             np.write()
             await asyncio.sleep_ms(delay)
@@ -26,34 +25,33 @@ async def cycle(np, delay, color):
         np[n-1] = color
         for i in range(n-1):
             for j in range(n-1):
-                np[j] = (0, 0, 0, 0)
+                np[j] = background_color
             np[i % n] = color
             np.write()
             await asyncio.sleep_ms(delay)
 
-async def bounce(np, delay, color):
+async def bounce(np, delay, color, background_color):
     n = np.n
-    # bounce
     for i in range(n):
         for j in range(n):
             np[j] = color
         if (i // n) % 2 == 0:
-            np[i % n] = (0, 0, 0, 0)
+            np[i % n] = background_color
         else:
-            np[n - 1 - (i % n)] = (0, 0, 0, 0)
+            np[n - 1 - (i % n)] = background_color
         np.write()
         await asyncio.sleep_ms(delay)
 
-async def fade(np, delay, color):
+async def fade(np, delay, color, background_color):
     def truncate(current_value, max_value):
-        if current_value < 0:
-            return 0
+        if current_value < 1:
+            return 1
         elif current_value > max_value:
             return max_value
         else:
             return current_value
     n = np.n
-    # fade in/out
+
     max_color = max(color)
     for i in range(0, 2*max_color, 8):
         for j in range(n):
@@ -70,7 +68,7 @@ async def fade(np, delay, color):
         np.write()
         await asyncio.sleep_ms(int(delay/2))
 
-async def indirect(programm, delay, color):
+async def indirect(programm):
     switcher={
             0:clear,
             1:cycle,
@@ -78,10 +76,10 @@ async def indirect(programm, delay, color):
             3:fade,
             }
     func=switcher.get(programm, lambda :'Invalid')
-    return await func(np, delay, color)
+    return await func(np, manager.delay, manager.led_color, manager.background_color)
 
 async def start():
     print("neopixel start")
     while True:
-        await indirect(manager.program_number, manager.delay, manager.led_color)
+        await indirect(manager.program_number)
         gc.collect()
