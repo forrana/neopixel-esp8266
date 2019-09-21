@@ -8,15 +8,9 @@ from index_html import html
 from global_vars import manager
 
 def set_color(hex_color):
-    print(hex_color)
-    new_color = hex_color.replace("#", "")
-    color_array_hex = [new_color[i:i+2] for i in range(0, len(new_color), 2)]
-    color_array_hex.append('00')
-    color_array_decimal = map(lambda  x:int(x,16), color_array_hex)
-    manager.led_color = tuple(color_array_decimal)
+    manager.led_color = hex_color
 
 def set_program(program_id):
-    print(program_id)
     manager.program_number = int(program_id)
 
 switcher={
@@ -26,7 +20,6 @@ switcher={
 
 def set_value(key, value):
     value_setter = switcher.get(key, lambda :'Not implemented')
-    print(value_setter)
     value_setter(value)
 
 class Server:
@@ -78,7 +71,7 @@ class Server:
                     break
             response = ""
             if is_get_request:
-                new_color = "%X%X%X" % (manager.led_color[0], manager.led_color[1], manager.led_color[2])
+                new_color = manager.led_color_hex
                 isxchecked = ['']*3
                 isxchecked[manager.program_number - 1] = 'checked'
                 response = html.format(color=new_color,is1checked=isxchecked[0],is2checked=isxchecked[1],is3checked=isxchecked[2])

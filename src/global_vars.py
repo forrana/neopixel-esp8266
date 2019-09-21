@@ -17,9 +17,20 @@ class GlobalVars(object):
     def led_color(self): 
         return self.state.get('led_color')
     
+    @property
+    def led_color_hex(self):
+        return "%0.2X%0.2X%0.2X" % (self.state['led_color'][0], self.state['led_color'][1], self.state['led_color'][2])
+    
     @led_color.setter 
     def led_color(self, value):
-        self.state['led_color'] = value
+        if isinstance(value, tuple):
+            self.state['led_color'] = value
+        elif isinstance(value, str):
+            new_color = value.replace("#", "")
+            color_array_hex = [new_color[i:i+2] for i in range(0, len(new_color), 2)]
+            color_array_hex.append('00')
+            color_array_decimal = map(lambda  x:int(x,16), color_array_hex)
+            self.state['led_color'] = tuple(color_array_decimal)
         self.save_state()
     
     @program_number.setter
