@@ -13,45 +13,64 @@ def clear(np):
         np[i] = (0, 0, 0, 0)
     np.write()
 
-async def cycle(np, delay):
+async def cycle(np, delay, color):
     n = np.n
-    for i in range(n):
-        for j in range(n):
-            np[j] = (0, 0, 0, 0)
-        np[i % n] = manager.led_color
-        np.write()
-        await asyncio.sleep_ms(delay)
-    return 1
+    if n % 2 == 0:
+        for i in range(n):
+            for j in range(n):
+                np[j] = (0, 0, 0, 0)
+            np[i % n] = color
+            np.write()
+            await asyncio.sleep_ms(delay)
+    else:
+        np[n-1] = color
+        for i in range(n-1):
+            for j in range(n-1):
+                np[j] = (0, 0, 0, 0)
+            np[i % n] = color
+            np.write()
+            await asyncio.sleep_ms(delay)
 
-async def bounce(np, delay):
+async def bounce(np, delay, color):
     n = np.n
     # bounce
     for i in range(n):
         for j in range(n):
-            np[j] = manager.led_color
+            np[j] = color
         if (i // n) % 2 == 0:
             np[i % n] = (0, 0, 0, 0)
         else:
             np[n - 1 - (i % n)] = (0, 0, 0, 0)
         np.write()
         await asyncio.sleep_ms(delay)
-    return 1
 
-async def fade(np, delay):
+async def fade(np, delay, color):
+    def truncate(current_value, max_value):
+        if current_value < 0:
+            return 0
+        elif current_value > max_value:
+            return max_value
+        else:
+            return current_value
     n = np.n
     # fade in/out
-    for i in range(0, 2*256, 8):
+    max_color = max(color)
+    for i in range(0, 2*max_color, 8):
         for j in range(n):
-            if (i // 256) % 2 == 0:
-                val = i & 0xff
-            else:
-                val = 255 - (i & 0xff)
-            np[j] = (val, 0, 0, 0)
+            result_color = [0, 0, 0, 0]
+            for color_position in range(3):
+                val = 0
+                grow_speed = color[color_position]/max_color
+                if (i // max_color) % 2 == 0:
+                    val = truncate(color[color_position] - int(i * grow_speed), color[color_position])
+                else:
+                    val = truncate(int((i % max_color) * grow_speed), color[color_position])
+                result_color[color_position] = val
+            np[j] = tuple(result_color)
         np.write()
         await asyncio.sleep_ms(int(delay/2))
-    return 1
 
-async def indirect(programm, delay):
+async def indirect(programm, delay, color):
     switcher={
             0:clear,
             1:cycle,
@@ -59,10 +78,10 @@ async def indirect(programm, delay):
             3:fade,
             }
     func=switcher.get(programm, lambda :'Invalid')
-    return await func(np, delay)
+    return await func(np, delay, color)
 
-async def start(programm, delay):
+async def start():
     print("neopixel start")
     while True:
-        await indirect(manager.program_number, delay)
+        await indirect(manager.program_number, manager.delay, manager.led_color)
         gc.collect()

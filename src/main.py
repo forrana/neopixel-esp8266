@@ -4,7 +4,7 @@ import web_interface
 import machine
 
 loop = asyncio.get_event_loop()
-loop.create_task(neopixel_programs.start(1, 100))
+loop.create_task(neopixel_programs.start())
 server = web_interface.Server()
 loop.create_task(server.run(loop))
 try:
