@@ -2,7 +2,7 @@
 import uasyncio as asyncio
 import machine, neopixel
 import gc
-import global_vars
+from global_vars import manager
 
 np = neopixel.NeoPixel(machine.Pin(4), 7, bpp=4)
 
@@ -18,7 +18,7 @@ async def cycle(np, delay):
     for i in range(n):
         for j in range(n):
             np[j] = (0, 0, 0, 0)
-        np[i % n] = global_vars.LED_COLOR
+        np[i % n] = manager.led_color
         np.write()
         await asyncio.sleep_ms(delay)
     return 1
@@ -28,7 +28,7 @@ async def bounce(np, delay):
     # bounce
     for i in range(n):
         for j in range(n):
-            np[j] = global_vars.LED_COLOR
+            np[j] = manager.led_color
         if (i // n) % 2 == 0:
             np[i % n] = (0, 0, 0, 0)
         else:
@@ -48,7 +48,7 @@ async def fade(np, delay):
                 val = 255 - (i & 0xff)
             np[j] = (val, 0, 0, 0)
         np.write()
-        await asyncio.sleep_ms(delay)
+        await asyncio.sleep_ms(int(delay/2))
     return 1
 
 async def indirect(programm, delay):
@@ -64,5 +64,5 @@ async def indirect(programm, delay):
 async def start(programm, delay):
     print("neopixel start")
     while True:
-        await indirect(global_vars.PROGRAM_NUMBER, delay)
+        await indirect(manager.program_number, delay)
         gc.collect()

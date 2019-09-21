@@ -1,6 +1,7 @@
 import uasyncio as asyncio
 import neopixel_programs
 import web_interface
+import machine
 
 loop = asyncio.get_event_loop()
 loop.create_task(neopixel_programs.start(1, 100))
@@ -12,3 +13,4 @@ except KeyboardInterrupt:
     print('Interrupted')  # This mechanism doesn't work on Unix build.
 finally:
     server.close()
+    machine.reset()

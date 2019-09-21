@@ -5,7 +5,7 @@ import gc
 import json
 import re
 from index_html import html
-import global_vars
+from global_vars import manager
 
 def set_color(hex_color):
     print(hex_color)
@@ -13,11 +13,11 @@ def set_color(hex_color):
     color_array_hex = [new_color[i:i+2] for i in range(0, len(new_color), 2)]
     color_array_hex.append('00')
     color_array_decimal = map(lambda  x:int(x,16), color_array_hex)
-    global_vars.LED_COLOR = tuple(color_array_decimal)
+    manager.led_color = tuple(color_array_decimal)
 
 def set_program(program_id):
     print(program_id)
-    global_vars.PROGRAM_NUMBER = int(program_id)
+    manager.program_number = int(program_id)
 
 switcher={
         'program':set_program,
@@ -46,11 +46,11 @@ class Server:
             res = poller.poll(1)  # 1ms block
             if res:  # Only s_sock is polled
                 cl, addr = s.accept()
-                loop.create_task(self.run_client(cl, addr))
+                loop.create_task(self.run_client(cl, addr, poller))
             await asyncio.sleep_ms(200)
             gc.collect()
 
-    async def run_client(self, sock, cid):
+    async def run_client(self, sock, cid, poller):
         self.socks.append(sock)
         sreader = asyncio.StreamReader(sock)
         swriter = asyncio.StreamWriter(sock, {})
@@ -78,9 +78,9 @@ class Server:
                     break
             response = ""
             if is_get_request:
-                new_color = "%X%X%X" % (global_vars.LED_COLOR[0], global_vars.LED_COLOR[1], global_vars.LED_COLOR[2])
+                new_color = "%X%X%X" % (manager.led_color[0], manager.led_color[1], manager.led_color[2])
                 isxchecked = ['']*3
-                isxchecked[global_vars.PROGRAM_NUMBER - 1] = 'checked'
+                isxchecked[manager.program_number - 1] = 'checked'
                 response = html.format(color=new_color,is1checked=isxchecked[0],is2checked=isxchecked[1],is3checked=isxchecked[2])
             else:
                 response = "HTTP/1.1 204 No Content\n\r\n"
@@ -88,9 +88,10 @@ class Server:
             print('Client {} disconnect.'.format(cid))
             sock.close()
             self.socks.remove(sock)
-            gc.collect()
+            poller.unregister(sock)
         except OSError:
             pass
+        gc.collect()
     def close(self):
         print('Closing {} sockets.'.format(len(self.socks)))
         for sock in self.socks:
