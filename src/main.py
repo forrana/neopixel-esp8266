@@ -11,6 +11,7 @@ try:
     loop.run_forever()
 except KeyboardInterrupt:
     print('Interrupted')  # This mechanism doesn't work on Unix build.
+except MemoryError:
+    machine.reset()
 finally:
     server.close()
-    machine.reset()
