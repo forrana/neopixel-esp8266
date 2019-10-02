@@ -4,12 +4,12 @@ import machine, neopixel
 import gc
 from global_vars import manager
 
-np = neopixel.NeoPixel(machine.Pin(4), 7, bpp=4)
+np = neopixel.NeoPixel(machine.Pin(2), 16, bpp=3)
 
 def clear(np):
     n = np.n
     for i in range(n):
-        np[i] = (0, 0, 0, 0)
+        np[i] = (0, 0, 0)
     np.write()
 
 async def cycle(np, delay, color, background_color):
@@ -44,8 +44,8 @@ async def bounce(np, delay, color, background_color):
 
 async def fade(np, delay, color, background_color):
     def truncate(current_value, max_value):
-        if current_value < 1:
-            return 1
+        if current_value < 0:
+            return 0
         elif current_value > max_value:
             return max_value
         else:
@@ -55,7 +55,7 @@ async def fade(np, delay, color, background_color):
     max_color = max(color)
     for i in range(0, 2*max_color, 8):
         for j in range(n):
-            result_color = [0, 0, 0, 0]
+            result_color = [0, 0, 0]
             for color_position in range(3):
                 val = 0
                 grow_speed = color[color_position]/max_color

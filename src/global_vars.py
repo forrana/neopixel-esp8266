@@ -89,6 +89,6 @@ class GlobalVars(object):
                 f.close()
            
 
-manager = GlobalVars(1, (166, 16, 30, 100), (0, 0, 0, 0), 100)
+manager = GlobalVars(1, (166, 16, 30), (0, 0, 0), 100)
 manager.load_state()
 
