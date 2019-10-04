@@ -3,6 +3,7 @@ import uasyncio as asyncio
 import machine, neopixel
 import gc
 from global_vars import manager
+import urandom
 
 np = neopixel.NeoPixel(machine.Pin(2), 16, bpp=3)
 
@@ -11,6 +12,76 @@ def clear(np):
     for i in range(n):
         np[i] = (0, 0, 0)
     np.write()
+
+async def crazy_rainbow(np, delay, color, background_color):
+    n = np.n
+    for i in range(n):
+        np[i] = (urandom.getrandbits(8), urandom.getrandbits(8), urandom.getrandbits(8))
+    np.write()
+    await asyncio.sleep_ms(delay)
+
+async def gradient(np, delay, color, background_color):
+    n = np.n
+    start_red = min(color[0], background_color[0])
+    start_green = min(color[1], background_color[1])
+    start_blue = min(color[2], background_color[2])
+
+    delta_red = int((max(color[0], background_color[0]) - start_red)/n)
+    delta_green = int((max(color[1], background_color[1]) - start_green)/n)
+    delta_blue = int((max(color[2], background_color[2]) - start_blue)/n)
+
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_red += delta_red
+        start_green += delta_green
+        start_blue += delta_blue
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_red -= delta_red
+        start_green -= delta_green
+        start_blue -= delta_blue
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+
+
+async def rainbow(np, delay, color, background_color):
+    n = np.n
+    start_red = 240
+    start_green = 0
+    start_blue = 0
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_green += int(255/n)
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_red -= int(255/n)
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_blue += int(255/n)
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_green -= int(255/n)
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_red += int(255/n)
+        np.write()
+        await asyncio.sleep_ms(int(delay))
+    for color_counter in range(n):
+        np[color_counter] = (start_red, start_green, start_blue)
+        start_blue -= int(255/n)
+        np.write()
+        await asyncio.sleep_ms(int(delay))
 
 async def cycle(np, delay, color, background_color):
     n = np.n
@@ -74,6 +145,9 @@ async def indirect(programm):
             1:cycle,
             2:bounce,
             3:fade,
+            4:rainbow,
+            5:crazy_rainbow,
+            6:gradient
             }
     func=switcher.get(programm, lambda :'Invalid')
     return await func(np, manager.delay, manager.led_color, manager.background_color)

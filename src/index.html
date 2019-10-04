@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
-    <head> 
+    <head>
         <title>Neopixel googles configuration</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <style>
             body {
                 background-color: linen;
             }
-            
+
             h1 {
                 color: maroon;
                 margin-left: 40px;
@@ -24,7 +24,7 @@
                 justify-content: flex-start;
                 margin-bottom: 2em;
             }
-        </style>        
+        </style>
     </head>
     <body>
         <main>
@@ -33,9 +33,12 @@
                 <h2>You can choose program and color</h2>
             </header>
             <section class="control program-control">
-                <input type="radio" name="program" value="1" {is1checked}> Cycle
-                <input type="radio" name="program" value="2" {is2checked}> Bounce
-                <input type="radio" name="program" value="3" {is3checked}> Fade
+              <input type="radio" name="program" value="1" {isxchecked[0]}> Cycle
+              <input type="radio" name="program" value="2" {isxchecked[1]}> Bounce
+              <input type="radio" name="program" value="3" {isxchecked[2]}> Fade
+              <input type="radio" name="program" value="4" {isxchecked[3]}> Rainbow
+              <input type="radio" name="program" value="5" {isxchecked[4]}> Crazy Rainbow
+              <input type="radio" name="program" value="6" {isxchecked[5]}> Gradient
             </section>
             <section class="control color-control">
                 Active color: <input type="color" name="color" value="#{color}">

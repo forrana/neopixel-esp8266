@@ -65,7 +65,7 @@ class Server:
                 if res == b'':
                     raise OSError
                 print('{}'.format(res))
-                if 'POST' in res: 
+                if 'POST' in res:
                     is_get_request = False
                 if 'Content-Length' in res:
                     utf8Res = res.decode('UTF-8')
@@ -81,9 +81,9 @@ class Server:
             if is_get_request:
                 hex_color = manager.led_color_hex
                 hex_bg_color = manager.background_color_hex
-                isxchecked = ['']*3
+                isxchecked = ['']*6
                 isxchecked[manager.program_number - 1] = 'checked'
-                response = html.format(color=hex_color,is1checked=isxchecked[0],is2checked=isxchecked[1],is3checked=isxchecked[2],delay=manager.delay,background_color=hex_bg_color)
+                response = html.format(color=hex_color,is1checked=isxchecked[0],is2checked=isxchecked[1],is3checked=isxchecked[2],is4checked=isxchecked[3],is5checked=isxchecked[4],is6checked=isxchecked[5],delay=manager.delay,background_color=hex_bg_color)
             else:
                 response = "HTTP/1.1 204 No Content\n\r\n"
             await swriter.awrite(response)
