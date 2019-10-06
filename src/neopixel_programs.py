@@ -5,18 +5,25 @@ import gc
 from global_vars import manager
 import urandom
 
-np = neopixel.NeoPixel(machine.Pin(2), 16, bpp=3)
+np = neopixel.NeoPixel(machine.Pin(2), manager.led_amount, bpp=manager.led_bits)
+led_bits = manager.led_bits
+
+def get_n_bits_color_tuple(red, green, blue, white, n):
+    if(n == 3):
+        return (red, green, blue)
+    elif(n == 4):
+        return (red, green, blue, white)
 
 def clear(np):
     n = np.n
     for i in range(n):
-        np[i] = (0, 0, 0)
+        np[i] = get_n_bits_color_tuple(0,0,0,0,led_bits)
     np.write()
 
 async def crazy_rainbow(np, delay, color, background_color):
     n = np.n
     for i in range(n):
-        np[i] = (urandom.getrandbits(8), urandom.getrandbits(8), urandom.getrandbits(8))
+        np[i] = get_n_bits_color_tuple(urandom.getrandbits(8), urandom.getrandbits(8), urandom.getrandbits(8), urandom.getrandbits(8), led_bits)
     np.write()
     await asyncio.sleep_ms(delay)
 
@@ -31,7 +38,7 @@ async def gradient(np, delay, color, background_color):
     delta_blue = int((max(color[2], background_color[2]) - start_blue)/n)
 
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_red += delta_red
         start_green += delta_green
         start_blue += delta_blue
@@ -39,7 +46,7 @@ async def gradient(np, delay, color, background_color):
         await asyncio.sleep_ms(int(delay))
 
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_red -= delta_red
         start_green -= delta_green
         start_blue -= delta_blue
@@ -53,32 +60,32 @@ async def rainbow(np, delay, color, background_color):
     start_green = 0
     start_blue = 0
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_green += int(255/n)
         np.write()
         await asyncio.sleep_ms(int(delay))
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_red -= int(255/n)
         np.write()
         await asyncio.sleep_ms(int(delay))
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_blue += int(255/n)
         np.write()
         await asyncio.sleep_ms(int(delay))
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_green -= int(255/n)
         np.write()
         await asyncio.sleep_ms(int(delay))
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_red += int(255/n)
         np.write()
         await asyncio.sleep_ms(int(delay))
     for color_counter in range(n):
-        np[color_counter] = (start_red, start_green, start_blue)
+        np[color_counter] = get_n_bits_color_tuple(start_red, start_green, start_blue,0,led_bits)
         start_blue -= int(255/n)
         np.write()
         await asyncio.sleep_ms(int(delay))
@@ -88,16 +95,16 @@ async def cycle(np, delay, color, background_color):
     if n % 2 == 0:
         for i in range(n):
             for j in range(n):
-                np[j] = background_color
-            np[i % n] = color
+                np[j] = get_n_bits_color_tuple(background_color[0],background_color[1],background_color[2],0,led_bits)
+            np[i % n] = get_n_bits_color_tuple(color[0],color[1],color[2],0,led_bits)
             np.write()
             await asyncio.sleep_ms(delay)
     else:
-        np[n-1] = color
+        np[n-1] = get_n_bits_color_tuple(color[0],color[1],color[2],0,led_bits)
         for i in range(n-1):
             for j in range(n-1):
-                np[j] = background_color
-            np[i % n] = color
+                np[j] = get_n_bits_color_tuple(background_color[0],background_color[1],background_color[2],0,led_bits)
+            np[i % n] = get_n_bits_color_tuple(color[0],color[1],color[2],0,led_bits)
             np.write()
             await asyncio.sleep_ms(delay)
 
@@ -105,11 +112,11 @@ async def bounce(np, delay, color, background_color):
     n = np.n
     for i in range(n):
         for j in range(n):
-            np[j] = color
+            np[j] = get_n_bits_color_tuple(color[0],color[1],color[2],0,led_bits)
         if (i // n) % 2 == 0:
-            np[i % n] = background_color
+            np[i % n] = get_n_bits_color_tuple(background_color[0],background_color[1],background_color[2],0,led_bits)
         else:
-            np[n - 1 - (i % n)] = background_color
+            np[n - 1 - (i % n)] = get_n_bits_color_tuple(background_color[0],background_color[1],background_color[2],0,led_bits)
         np.write()
         await asyncio.sleep_ms(delay)
 
@@ -135,7 +142,7 @@ async def fade(np, delay, color, background_color):
                 else:
                     val = truncate(int((i % max_color) * grow_speed), color[color_position])
                 result_color[color_position] = val
-            np[j] = tuple(result_color)
+            np[j] = get_n_bits_color_tuple(result_color[0],result_color[1],result_color[2],0,led_bits)
         np.write()
         await asyncio.sleep_ms(int(delay/2))
 

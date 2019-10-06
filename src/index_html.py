@@ -54,6 +54,11 @@ Content-Type: text/html; charset=UTF-8
                     <option value="500" label="max"></option>
                 </datalist>
             </section>
+            <section class="control hardware-control">
+              Number of LEDS: <input type="number" name="led_amount" min="1" max="32" value="#{led_amount}">
+              Number of Bits: <input type="number" name="led_bits" min="3" max="4" value="#{led_bits}">
+              <small>*require restart</small>
+            </section>
         </main>
         <script>
             async function onChange(e) {{
