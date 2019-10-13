@@ -25,6 +25,15 @@ def set_led_amount(led_amount):
 def set_led_bits(led_bits):
     manager.led_bits = int(led_bits)
 
+def is_sync_mode(is_sync_mode):
+    manager.is_sync_mode = is_sync_mode
+
+def master_ap_id(master_ap_id):
+    manager.master_ap_id = master_ap_id
+
+def master_ap_password(master_ap_password):
+    manager.master_ap_password = master_ap_password
+
 switcher={
         'program':set_program,
         'color':set_color,
@@ -32,6 +41,9 @@ switcher={
         'background_color':set_background_color,
         'led_amount': set_led_amount,
         'led_bits': set_led_bits,
+        'is_sync_mode': is_sync_mode,
+        'master_ap_id': master_ap_id,
+        'master_ap_password': master_ap_password,
     }
 
 def set_value(key, value):
@@ -104,7 +116,10 @@ class Server:
                     delay=manager.delay, \
                     background_color=hex_bg_color, \
                     led_amount = led_amount, \
-                    led_bits = led_bits \
+                    led_bits = led_bits, \
+                    is_sync_mode = manager.is_sync_mode, \
+                    master_ap_id = manager.master_ap_id, \
+                    master_ap_password = manager.master_ap_password, \
                     )
             else:
                 response = "HTTP/1.1 204 No Content\n\r\n"

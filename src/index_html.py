@@ -57,6 +57,10 @@ Content-Type: text/html; charset=UTF-8
             <section class="control hardware-control">
               Number of LEDS: <input type="number" name="led_amount" min="1" max="32" value="#{led_amount}">
               Number of Bits: <input type="number" name="led_bits" min="3" max="4" value="#{led_bits}">
+              <hr/>
+              Sync to other device: <input type="checkbox" name="is_sync_mode" checked="#{is_sync_mode}">
+              Master device AP Name: <input type="text" name="master_ap_id" value="#{master_ap_id}">
+              Master device AP Password: <input type="password" name="master_ap_password" value="#{master_ap_password}">
               <small>*require restart</small>
             </section>
         </main>

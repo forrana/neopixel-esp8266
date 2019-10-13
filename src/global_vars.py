@@ -2,7 +2,16 @@ import json
 
 
 class GlobalVars(object):
-    def __init__(self, program_number, led_color, background_color, delay, led_amount, led_bits):
+    def __init__(self, \
+                program_number, \
+                led_color, \
+                background_color, \
+                delay, \
+                led_amount, \
+                led_bits, \
+                is_sync_mode, \
+                master_ap_id, \
+                master_ap_password):
         self.state = {}
         self.state['program_number'] = program_number
         self.state['led_color'] = led_color
@@ -10,6 +19,9 @@ class GlobalVars(object):
         self.state['delay'] = delay
         self.state['led_amount'] = led_amount
         self.state['led_bits'] = led_bits
+        self.state['is_sync_mode'] = is_sync_mode
+        self.state['master_ap_id'] = master_ap_id
+        self.state['master_ap_password'] = master_ap_password
 
     def _color_hex_to_tuple(self, color_hex):
         new_color = color_hex.replace("#", "")
@@ -20,6 +32,18 @@ class GlobalVars(object):
 
     def _color_tuple_to_hex(self, color_tuple):
         return "%0.2X%0.2X%0.2X" % (color_tuple[0], color_tuple[1], color_tuple[2])
+
+    @property
+    def is_sync_mode(self):
+        return self.state.get('is_sync_mode')
+
+    @property
+    def master_ap_id(self):
+        return self.state.get('master_ap_id')
+
+    @property
+    def master_ap_password(self):
+        return self.state.get('master_ap_password')
 
     @property
     def delay(self):
@@ -89,6 +113,21 @@ class GlobalVars(object):
         self.state['led_bits'] = value
         self.save_state()
 
+    @is_sync_mode.setter
+    def is_sync_mode(self, value):
+        self.state['is_sync_mode'] = value
+        self.save_state()
+
+    @master_ap_id.setter
+    def master_ap_id(self, value):
+        self.state['master_ap_id'] = value
+        self.save_state()
+
+    @master_ap_password.setter
+    def master_ap_password(self, value):
+        self.state['master_ap_password'] = value
+        self.save_state()
+
     def save_state(self):
         f = open('state.txt', 'w')
         f.write(json.dumps(self.state))
@@ -109,5 +148,5 @@ class GlobalVars(object):
                 f.close()
 
 
-manager = GlobalVars(1, (166, 16, 30), (0, 0, 0), 100, 16, 3)
+manager = GlobalVars(1, (166, 16, 30), (0, 0, 0), 100, 16, 3, None, None, None)
 manager.load_state()
