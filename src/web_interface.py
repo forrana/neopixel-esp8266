@@ -117,6 +117,8 @@ class Server:
             pass
         gc.collect()
     def close(self):
-        print('Closing {} sockets.'.format(len(self.socks)))
-        for sock in self.socks:
-            sock.close()
+        print('closing connection')
+        if hasattr(self, 'socks'):
+            print('Closing {} sockets.'.format(len(self.socks)))
+            for sock in self.socks:
+                sock.close()

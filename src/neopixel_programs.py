@@ -28,11 +28,12 @@ def get_n_bits_color_tuple(red, green, blue, white, n):
     elif(n == 4):
         return (red, green, blue, white)
 
-def clear(np):
+async def clear(np, delay, color, background_color):
     n = np.n
     for i in range(n):
         np[i] = get_n_bits_color_tuple(0,0,0,0,led_bits)
     np.write()
+    await asyncio.sleep_ms(1)
 
 async def crazy_rainbow(np, delay, color, background_color):
     n = np.n
