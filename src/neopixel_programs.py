@@ -6,7 +6,21 @@ from global_vars import manager
 import urandom
 
 np = neopixel.NeoPixel(machine.Pin(2), manager.led_amount, bpp=manager.led_bits)
+button = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)
+
 led_bits = manager.led_bits
+
+async def wait_pin_change(pin):
+    # wait for pin to change value
+    # it needs to be stable for a continuous 20ms
+    cur_value = pin.value()
+    active = 0
+    while active < 500:
+        if pin.value() != cur_value:
+            active += 1
+        else:
+            active = 0
+        await asyncio.sleep_ms(1)
 
 def get_n_bits_color_tuple(red, green, blue, white, n):
     if(n == 3):
@@ -160,6 +174,8 @@ async def indirect(programm):
     return await func(np, manager.delay, manager.led_color, manager.background_color)
 
 async def start():
+    await indirect(0)
+    await wait_pin_change(button)
     print("neopixel start")
     while True:
         await indirect(manager.program_number)
