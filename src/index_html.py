@@ -55,9 +55,10 @@ Content-Type: text/html; charset=UTF-8
                 </datalist>
             </section>
             <section class="control hardware-control">
-              Number of LEDS: <input type="number" name="led_amount" min="1" max="32" value="#{led_amount}">
-              Number of Bits: <input type="number" name="led_bits" min="3" max="4" value="#{led_bits}">
+              Number of LEDS: <input type="number" name="led_amount" min="1" max="32" value="{led_amount}">
+              Number of Bits: <input type="number" name="led_bits" min="3" max="4" value="{led_bits}">
               <small>*require restart</small>
+              Timer delta: <input type="number" name="delta_time" value="{delta_time}">
             </section>
         </main>
         <script>

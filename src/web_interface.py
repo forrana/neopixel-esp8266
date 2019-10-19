@@ -25,6 +25,9 @@ def set_led_amount(led_amount):
 def set_led_bits(led_bits):
     manager.led_bits = int(led_bits)
 
+def set_delta_time(delta_time):
+    manager.delta_time = int(delta_time)
+
 switcher={
         'program':set_program,
         'color':set_color,
@@ -32,6 +35,7 @@ switcher={
         'background_color':set_background_color,
         'led_amount': set_led_amount,
         'led_bits': set_led_bits,
+        'delta_time': set_delta_time,
     }
 
 def set_value(key, value):
@@ -104,7 +108,8 @@ class Server:
                     delay=manager.delay, \
                     background_color=hex_bg_color, \
                     led_amount = led_amount, \
-                    led_bits = led_bits \
+                    led_bits = led_bits, \
+                    delta_time = manager.delta_time \
                     )
             else:
                 response = "HTTP/1.1 204 No Content\n\r\n"

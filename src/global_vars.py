@@ -2,7 +2,7 @@ import json
 
 
 class GlobalVars(object):
-    def __init__(self, program_number, led_color, background_color, delay, led_amount, led_bits):
+    def __init__(self, program_number, led_color, background_color, delay, led_amount, led_bits, delta_time):
         self.state = {}
         self.state['program_number'] = program_number
         self.state['led_color'] = led_color
@@ -10,6 +10,7 @@ class GlobalVars(object):
         self.state['delay'] = delay
         self.state['led_amount'] = led_amount
         self.state['led_bits'] = led_bits
+        self.state['delta_time'] = delta_time
 
     def _color_hex_to_tuple(self, color_hex):
         new_color = color_hex.replace("#", "")
@@ -24,6 +25,10 @@ class GlobalVars(object):
     @property
     def delay(self):
         return self.state.get('delay')
+
+    @property
+    def delta_time(self):
+        return self.state.get('delta_time')
 
     @property
     def led_amount(self):
@@ -84,6 +89,11 @@ class GlobalVars(object):
         self.state['led_amount'] = value
         self.save_state()
 
+    @delta_time.setter
+    def delta_time(self, value):
+        self.state['delta_time'] = value
+        self.save_state()
+
     @led_bits.setter
     def led_bits(self, value):
         self.state['led_bits'] = value
@@ -109,5 +119,5 @@ class GlobalVars(object):
                 f.close()
 
 
-manager = GlobalVars(1, (166, 16, 30), (0, 0, 0), 100, 16, 3)
+manager = GlobalVars(1, (166, 16, 30), (0, 0, 0), 100, 16, 3, 3)
 manager.load_state()

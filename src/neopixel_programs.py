@@ -4,9 +4,10 @@ import machine, neopixel
 import gc
 from global_vars import manager
 import urandom
+from utime import time
 
 np = neopixel.NeoPixel(machine.Pin(2), manager.led_amount, bpp=manager.led_bits)
-button = machine.Pin(0, machine.Pin.IN, machine.Pin.PULL_UP)
+# button = machine.Pin(3, machine.Pin.IN, machine.Pin.PULL_UP)
 
 led_bits = manager.led_bits
 
@@ -176,8 +177,34 @@ async def indirect(programm):
 
 async def start():
     await indirect(0)
-    await wait_pin_change(button)
+    # await wait_pin_change(button)
     print("neopixel start")
+    start = time()
     while True:
-        await indirect(manager.program_number)
-        gc.collect()
+        now = time()
+        time_diff = now - start + manager.delta_time
+        if time_diff < 30:
+            await indirect(3)
+            print(time_diff)
+        elif time_diff >= 30 and time_diff < 75:
+            print(time_diff)
+            await indirect(2)
+        elif time_diff >= 75 and time_diff < 150:
+            print(time_diff)
+            await indirect(1)
+        elif time_diff >= 150 and time_diff < 240:
+            print(time_diff)
+            await indirect(6)
+        elif time_diff >= 240 and time_diff < 300:
+            print(time_diff)
+            await indirect(2)
+        elif time_diff >= 300 and time_diff < 405:
+            print(time_diff)
+            await indirect(5)
+        elif time_diff >= 405 and time_diff < 510:
+            print(time_diff)
+            await indirect(4)
+        elif time_diff >= 510:
+            print(time_diff)
+            await indirect(3)
+        await asyncio.sleep_ms(50)
